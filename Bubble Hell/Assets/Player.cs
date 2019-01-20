@@ -50,20 +50,22 @@ public class Player : MonoBehaviour
             //player 1 - WASD to move
             transform.Translate(Input.GetAxis("Vertical2") * Vector3.up * speed * Time.deltaTime);
             //turn
-            if (Input.GetKey(KeyCode.A))
-                transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
-            if (Input.GetKey(KeyCode.D))
-                transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
+            transform.Rotate(Input.GetAxis("Horizontal2") * Vector3.back * turnSpeed * Time.deltaTime);
+            //if (Input.GetKey(KeyCode.A))
+            //    transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
+            //if (Input.GetKey(KeyCode.D))
+            //    transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
         }
         else
         {
             //player 2 - Arrows keys to move
             transform.Translate(Input.GetAxis("Vertical") * Vector3.up * speed * Time.deltaTime);
             //turn
-            if (Input.GetKey(KeyCode.LeftArrow))
-                transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
-            if (Input.GetKey(KeyCode.RightArrow))
-                transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
+            transform.Rotate(Input.GetAxis("Horizontal") * Vector3.back * turnSpeed * Time.deltaTime);
+            //if (Input.GetKey(KeyCode.LeftArrow))
+            //    transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
+            //if (Input.GetKey(KeyCode.RightArrow))
+            //    transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
         }
     }
 
