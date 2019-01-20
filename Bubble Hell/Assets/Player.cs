@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private float nextBubble = 0f; //timing when the next bubble bullet shoots out
     private float prisonEnd = 0f; //timing when the bubble prison disappears
     private Vector3 input = new Vector3(0, 0, 0);
+    private Vector3 inputshoot = new Vector3(0, 0, 0);
 
     private enum PlayerState //creating a list of states
     {
@@ -50,11 +51,11 @@ public class Player : MonoBehaviour
         //player 2 - arrowkeys to move, or Switch JoyCon controller 2
         if (this.name == "Player1")
         {
-            input = new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0f);
+            input = new Vector3(Input.GetAxis("p1_Horizontal"), Input.GetAxis("p1_Vertical"), 0f);
         }
         else
         {
-            input = new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0f);
+            input = new Vector3(Input.GetAxis("p2_Horizontal"), Input.GetAxis("p2_Vertical"), 0f);
         }
 
         //movement in worldspace
@@ -71,10 +72,10 @@ public class Player : MonoBehaviour
 
     void shooting()
     {
-        //player 1 - space to shoot
-        //player 2 - ctrl to shoot
-        if (this.name == "Player1" && Input.GetKey(KeyCode.Space) ||
-            this.name == "Player2" && Input.GetKey(KeyCode.RightControl))
+        //player 1 - left ctrl to shoot
+        //player 2 - right ctrl to shoot
+        if (this.name == "Player1" && Input.GetButton("p1_Fire1") ||
+            this.name == "Player2" && Input.GetButton("p2_Fire1"))
         {
             if (Time.time > nextBubble)
             {
