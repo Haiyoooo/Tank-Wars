@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private stateManager stateScript; //refer to script called "stateScript"
     private float nextBubble = 0f; //timing when the next bubble bullet shoots out
     private float prisonEnd = 0f; //timing when the bubble prison disappears
+    private Vector3 input = new Vector3(0, 0, 0);
 
     private enum PlayerState //creating a list of states
     {
@@ -45,27 +46,26 @@ public class Player : MonoBehaviour
 
     void movement()
     {
+        //player 1 - WASD to move, or Switch JoyCon controller 1
+        //player 2 - arrowkeys to move, or Switch JoyCon controller 2
         if (this.name == "Player1")
         {
-            //player 1 - WASD to move
-            transform.Translate(Input.GetAxis("Vertical2") * Vector3.up * speed * Time.deltaTime);
-            //turn
-            transform.Rotate(Input.GetAxis("Horizontal2") * Vector3.back * turnSpeed * Time.deltaTime);
-            //if (Input.GetKey(KeyCode.A))
-            //    transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
-            //if (Input.GetKey(KeyCode.D))
-            //    transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
+            input = new Vector3(Input.GetAxis("Horizontal1"), Input.GetAxis("Vertical1"), 0f);
         }
         else
         {
-            //player 2 - Arrows keys to move
-            transform.Translate(Input.GetAxis("Vertical") * Vector3.up * speed * Time.deltaTime);
-            //turn
-            transform.Rotate(Input.GetAxis("Horizontal") * Vector3.back * turnSpeed * Time.deltaTime);
-            //if (Input.GetKey(KeyCode.LeftArrow))
-            //    transform.Rotate(0f, 0f, turnSpeed * Time.deltaTime);
-            //if (Input.GetKey(KeyCode.RightArrow))
-            //    transform.Rotate(0f, 0f, -turnSpeed * Time.deltaTime);
+            input = new Vector3(Input.GetAxis("Horizontal2"), Input.GetAxis("Vertical2"), 0f);
+        }
+
+        //movement in worldspace
+        //eg. right key always moves player towards screen's right, regardless of which way the player sprite is currently facing
+        transform.Translate(input * speed * Time.deltaTime, Space.World);
+
+        //rotate player to face movement direction
+        //credit https://answers.unity.com/questions/1387259/joystick-character-movement.html
+        if (input != Vector3.zero)
+        {
+            transform.up = input;
         }
     }
 
