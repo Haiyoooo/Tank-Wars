@@ -29,7 +29,7 @@ public class ObstacleSpawner : MonoBehaviour
     void Start()
     {
         //spawn enemies every _ seconds
-        InvokeRepeating("SpawnObject", 10, spawnDelay);
+        InvokeRepeating("SpawnObject", 5, spawnDelay);
     }
 
     public void SpawnObject()

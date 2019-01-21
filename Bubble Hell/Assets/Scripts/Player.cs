@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float speed = 3, bubbleDelay = 1f, prisonDuration = 2f;
-    [SerializeField] private GameObject bulletPrefab, bubblePrisonPrefab, gameoverSprite, playerWinSprite, explosionGIF;
-    private stateManager stateScript; //refer to script called "stateScript"
+    [SerializeField] private GameObject bulletPrefab, bubblePrisonPrefab, gameoverSprite, playerWinSprite, explosionGIF, canvas;
     private float nextBubble = 0f; //timing when the next bubble bullet shoots out
     private float prisonEnd = 0f; //timing when the bubble prison disappears
     private Vector3 input = new Vector3(0, 0, 0);
@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        stateScript = GameObject.FindWithTag("GameManager").gameObject.GetComponent<stateManager>();
         sceneCam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
@@ -126,12 +125,16 @@ public class Player : MonoBehaviour
 
     void rip()
     {
-        //player disappears
-        //this.transform.GetComponent<SpriteRenderer>().enabled = false;
-
         //ui text
         gameoverSprite.SetActive(true);
         playerWinSprite.SetActive(true);
+        canvas.SetActive(true);
+
+        //reset game by reloading this scene
+        if (Input.GetButton("p1_Fire1") || Input.GetButton("p2_Fire1"))
+        {
+            SceneManager.LoadScene("Level", LoadSceneMode.Single);
+        }
     }
 
     void wrap()
@@ -142,11 +145,11 @@ public class Player : MonoBehaviour
         //if player sprite goes offscreen, wrap round
         if(normPos2D.x < 0 || normPos2D.x > 1)
         {
-            newPos.x *= -1;
+            newPos.x *= -0.99f; //not -1 because there'll be infinite wrap bug
         }
         if(normPos2D.y < 0 || normPos2D.y > 1)
         {
-            newPos.y *= -1;
+            newPos.y *= -0.99f;
         }
         this.transform.position = newPos;
     }
