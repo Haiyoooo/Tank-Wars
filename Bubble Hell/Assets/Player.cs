@@ -4,26 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float speed = 3, turnSpeed = 200, bubbleDelay = 1f, prisonDuration = 2f;
+    [SerializeField] private float speed = 3, bubbleDelay = 1f, prisonDuration = 2f;
     [SerializeField] private GameObject bulletPrefab, bubblePrisonPrefab, gameoverSprite, playerWinSprite, explosionGIF;
     private stateManager stateScript; //refer to script called "stateScript"
     private float nextBubble = 0f; //timing when the next bubble bullet shoots out
     private float prisonEnd = 0f; //timing when the bubble prison disappears
     private Vector3 input = new Vector3(0, 0, 0);
     private Vector3 inputshoot = new Vector3(0, 0, 0);
-
-    private enum PlayerState //creating a list of states
-    {
-        ALIVE,
-        STUNNED,
-        DEAD
-    };
-    PlayerState myPlayerState; //creating an object of type PlayerState called myPlayerState
+    private enum PlayerState { ALIVE, STUNNED, DEAD }; //possible statess
+    private PlayerState myPlayerState; //my current state
+    private Camera sceneCam;
 
 
     private void Start()
     {
         stateScript = GameObject.FindWithTag("GameManager").gameObject.GetComponent<stateManager>();
+        sceneCam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     private void Update()
@@ -33,11 +29,11 @@ public class Player : MonoBehaviour
             case PlayerState.ALIVE:
                 movement();
                 shooting();
-                this.transform.GetComponent<CircleCollider2D>().enabled = false; //disable collider
+                wrap();
                 break;
             case PlayerState.STUNNED:
                 bubblePrison();
-                this.transform.GetComponent<CircleCollider2D>().enabled = true;
+                wrap();
                 break;
             case PlayerState.DEAD:
                 rip();
@@ -47,8 +43,8 @@ public class Player : MonoBehaviour
 
     void movement()
     {
-        //player 1 - WASD to move, or Switch JoyCon controller 1
-        //player 2 - arrowkeys to move, or Switch JoyCon controller 2
+        //player 1 - WASD to move, or JoyCon joystick
+        //player 2 - arrowkeys to move, or JoyCon joystick
         if (this.name == "Player1")
         {
             input = new Vector3(Input.GetAxis("p1_Horizontal"), Input.GetAxis("p1_Vertical"), 0f);
@@ -72,8 +68,8 @@ public class Player : MonoBehaviour
 
     void shooting()
     {
-        //player 1 - left ctrl to shoot
-        //player 2 - right ctrl to shoot
+        //player 1 - left ctrl to shoot, or JoyCon X
+        //player 2 - right ctrl to shoot, or JoyCon X
         if (this.name == "Player1" && Input.GetButton("p1_Fire1") ||
             this.name == "Player2" && Input.GetButton("p2_Fire1"))
         {
@@ -117,12 +113,13 @@ public class Player : MonoBehaviour
     private void bubblePrison()
     {
         //rotate
-        this.transform.Rotate(0f, 0f, 50f);
-        
+        this.transform.Rotate(0f, 0f, 50f); //spin the player round and round
+        this.transform.GetComponent<CircleCollider2D>().enabled = true; //enable bubble prison's collider
 
         if (Time.time > prisonEnd)
         {
-            bubblePrisonPrefab.SetActive(false);
+            bubblePrisonPrefab.SetActive(false); //disable bubble prison's image
+            this.transform.GetComponent<CircleCollider2D>().enabled = false; //disable bubble prison's collider
             myPlayerState = PlayerState.ALIVE;
         }
     }
@@ -135,6 +132,23 @@ public class Player : MonoBehaviour
         //ui text
         gameoverSprite.SetActive(true);
         playerWinSprite.SetActive(true);
+    }
+
+    void wrap()
+    {
+        Vector2 normPos2D = sceneCam.WorldToViewportPoint(this.transform.position);  // 0.5 = screen center
+        Vector2 newPos = this.transform.position; //created to manipulate position vector because can't do: transform.position.x *= -1
+
+        //if player sprite goes offscreen, wrap round
+        if(normPos2D.x < 0 || normPos2D.x > 1)
+        {
+            newPos.x *= -1;
+        }
+        if(normPos2D.y < 0 || normPos2D.y > 1)
+        {
+            newPos.y *= -1;
+        }
+        this.transform.position = newPos;
     }
 }
 

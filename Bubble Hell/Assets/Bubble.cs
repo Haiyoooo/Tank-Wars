@@ -18,4 +18,11 @@ public class Bubble : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
+    private void OnBecameInvisible()
+    {
+        //destroy offscreen bubbles
+        //note: Hide scene view in editor when testing.
+        Destroy(this.gameObject);
+    }
 }
